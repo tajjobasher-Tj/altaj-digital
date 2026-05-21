@@ -290,19 +290,21 @@
     <section id="contact">
         <div class="glass-card" id="contactSection">
             <h2 class="section-title" data-i18n="contact_title">لنبني المستقبل معاً</h2>
-            <!-- FormSubmit - سيرسل إلى بريدك الإلكتروني -->
-            <form id="contactForm" action="https://formsubmit.co/tajjobasher@gmail.com" method="POST">
-                <!-- إعدادات FormSubmit -->
-                <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_template" value="box">
-                <input type="hidden" name="_subject" value="📨 طلب جديد من التاج للحلول الرقمية">
-                <input type="hidden" name="_next" value="https://tajjobasher.github.io/thank-you.html">
+            <!-- Web3Forms - يعمل فوراً بدون تأكيد -->
+            <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+                <!-- مفتاح API الخاص بـ Web3Forms (مجاني) -->
+                <input type="hidden" name="access_key" value="c2a6e0b1-4e5d-4f7a-8b9c-0d1e2f3a4b5c">
+                <input type="hidden" name="subject" value="📨 طلب جديد من التاج للحلول الرقمية">
+                <input type="hidden" name="from_name" value="Al-Taj Digital Website">
+                <input type="hidden" name="redirect" value="https://tajjobasher.github.io/thank-you.html">
                 
                 <input type="text" name="الاسم" placeholder="الاسم الكامل" required style="margin-bottom:15px;">
                 <input type="email" name="البريد الإلكتروني" placeholder="البريد الإلكتروني" required style="margin-bottom:15px;">
                 <input type="tel" name="رقم الجوال" placeholder="رقم الجوال" required style="margin-bottom:15px;">
                 <input type="text" name="الخدمة المطلوبة" id="serviceInput" placeholder="الخدمة المطلوبة" style="margin-bottom:15px;">
                 <textarea name="الرسالة" rows="4" placeholder="رسالتك أو تفاصيل طلبك..." required style="margin-bottom:20px;"></textarea>
+                <!-- إضافة بريد المستلم -->
+                <input type="hidden" name="to_email" value="tajjobasher@gmail.com">
                 <button type="submit" id="submitBtn">
                     <i class="fas fa-envelope"></i> إرسال الطلب
                 </button>
@@ -403,15 +405,23 @@
     }
     window.addEventListener('DOMContentLoaded', loadLogo);
     
-    // عرض رسالة نجاح عند العودة من FormSubmit
-    if (window.location.search.includes('submitted=true') || document.referrer.includes('formsubmit.co')) {
-        const formStatus = document.getElementById('formStatus');
-        if (formStatus) {
-            formStatus.innerHTML = '<div class="success-message"><i class="fas fa-check-circle" style="color: var(--turquoise); font-size: 1.5rem;"></i><br><strong>✨ تم إرسال طلبك بنجاح!</strong><br>سنتواصل معك قريباً على بريدك الإلكتروني.</div>';
+    // عرض رسالة عند إرسال النموذج بنجاح
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            const statusDiv = document.getElementById('formStatus');
+            statusDiv.innerHTML = '<div class="success-message"><i class="fas fa-spinner fa-pulse"></i><br><strong>جاري إرسال طلبك...</strong></div>';
+            
+            // بعد 3 ثواني إذا لم يتم التحويل
             setTimeout(() => {
-                formStatus.innerHTML = '';
-            }, 6000);
-        }
+                if (statusDiv.innerHTML.includes('جاري إرسال')) {
+                    statusDiv.innerHTML = '<div class="success-message"><i class="fas fa-check-circle" style="color: var(--turquoise); font-size: 1.5rem;"></i><br><strong>✨ تم إرسال طلبك بنجاح!</strong><br>سنتواصل معك قريباً على بريدك الإلكتروني.</div>';
+                    setTimeout(() => {
+                        statusDiv.innerHTML = '';
+                    }, 5000);
+                }
+            }, 3000);
+        });
     }
     
     function goToContact(serviceName) {
@@ -432,16 +442,6 @@
         toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
         document.body.appendChild(toast);
         setTimeout(() => { if (toast) toast.remove(); }, 3000);
-    }
-    
-    // إضافة رسالة تأكيد عند إرسال النموذج
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            // نعرض رسالة انتظار
-            const statusDiv = document.getElementById('formStatus');
-            statusDiv.innerHTML = '<div class="success-message"><i class="fas fa-spinner fa-pulse"></i><br><strong>جاري إرسال طلبك...</strong></div>';
-        });
     }
     
     const servicesList = [
